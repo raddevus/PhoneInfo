@@ -14,7 +14,9 @@ import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_main.view.*
 
 
 class EntryAdapter : RecyclerView.Adapter<EntryAdapter.ViewHolder?> {
@@ -36,27 +38,25 @@ class EntryAdapter : RecyclerView.Adapter<EntryAdapter.ViewHolder?> {
         init {
             entryTextView =
                 itemView.findViewById<View>(R.id.entryIdTextView) as TextView
-//            entryTextView.setOnLongClickListener { view ->
-//                Log.d(
-//                    "MainActivity", "entryTextView LongClick! : "
-//                            + entryTextView.text
-//                )
-//                Log.d("MainActivity", "got focus : " + view.id.toString())
+            entryTextView.setOnLongClickListener { view ->
+                Log.d("MainActivity", "entryTextView LongClick! : ${entryTextView.text}")
+                Log.d("MainActivity", "got focus : ${view.title}")
+                Toast.makeText(view.getContext(),"got focus : ${entryTextView.text}", Toast.LENGTH_SHORT).show()
 //                Log.d(
 //                    "MainActivity",
 //                    "haptic is enabled : " + entryTextView.isHapticFeedbackEnabled
 //                )
-//                entryTextView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-//                val initialText = entryTextView.text.toString()
-//                spannableStyle = SpannableString(initialText)
-//                textStyle = BackgroundColorSpan(Color.YELLOW)
-//                spannableStyle!!.setSpan(
-//                    textStyle,
-//                    0,
-//                    spannableStyle!!.length,
-//                    0
-//                )
-//                entryTextView.text = spannableStyle
+                entryTextView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                val initialText = entryTextView.text.toString()
+                spannableStyle = SpannableString(initialText)
+                textStyle = BackgroundColorSpan(Color.YELLOW)
+                spannableStyle!!.setSpan(
+                    textStyle,
+                    0,
+                    spannableStyle!!.length,
+                    0
+                )
+                entryTextView.text = spannableStyle
 //                Log.d("MainActivity", "copying to clipboard")
 //                val clipboard =
 //                    view.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -71,21 +71,21 @@ class EntryAdapter : RecyclerView.Adapter<EntryAdapter.ViewHolder?> {
 //                    1,
 //                    mConfig.getUserId().toString() + ":" + entryTextView.tag.toString()
 //                )
-//                true
-//            }
-//            entryTextView.onFocusChangeListener =
-//                OnFocusChangeListener { v, hasFocus ->
-//                    if (!hasFocus) {
-//                        previousText = entryTextView.text.toString()
-//                        Log.d(
-//                            "MainActivity",
-//                            "lost focus : " + v.id.toString() + " : " + previousText
-//                        )
-//                        previousStyle = SpannableString(previousText)
-//                        previousStyle!!.removeSpan(previousStyle)
-//                        entryTextView.text = previousStyle
-//                    }
-//                }
+                true
+            }
+            entryTextView.onFocusChangeListener =
+                OnFocusChangeListener { v, hasFocus ->
+                    if (!hasFocus) {
+                        previousText = entryTextView.text.toString()
+                        Log.d(
+                            "MainActivity",
+                            "lost focus : " + v.id.toString() + " : " + previousText
+                        )
+                        previousStyle = SpannableString(previousText)
+                        previousStyle!!.removeSpan(previousStyle)
+                        entryTextView.text = previousStyle
+                    }
+                }
             //league = (TextView) itemView.findViewById(R.id.tvLeague);
 //yearEstablished = (TextView) itemView.findViewById(R.id.tvYear);
         }
