@@ -44,7 +44,7 @@ class PlaceholderFragment : Fragment() {
                 root = inflater.inflate(R.layout.fragment_main, container, false)
                 textView = root?.findViewById(R.id.section_label)
             }
-            1 -> {
+            1,4 -> {
                 root = inflater.inflate(R.layout.fragment_phone, container, false)
                 val b: Button = root?.findViewById(R.id.alertbutton) as Button
                 b.setOnClickListener {
@@ -56,7 +56,7 @@ class PlaceholderFragment : Fragment() {
                 EntryViewRecyclerView.setLayoutManager(manager)
                 var entryList = ArrayList<Entry>()
 
-                var adapter = EntryAdapter(entryList)
+
 
                 //getAllEntries(EntryViewRecyclerView)
                 var entry : Entry = Entry()
@@ -66,9 +66,9 @@ class PlaceholderFragment : Fragment() {
                     entry.title = "new item : ${x}"
                     entryList.add(entry)
                 }
+                var entryAdapter = EntryAdapter(entryList)
 
-                adapter.allEntries = entryList
-                EntryViewRecyclerView.adapter = adapter;
+                EntryViewRecyclerView.adapter = entryAdapter;
             }
         }
 
