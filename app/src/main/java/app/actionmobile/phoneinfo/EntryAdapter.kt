@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.main.activity_main.view.*
 class EntryAdapter : RecyclerView.Adapter<EntryAdapter.ViewHolder?> {
     var allEntries: List<Entry> = ArrayList()
 
-    constructor() {}
     constructor(entryList: List<Entry>) {
         allEntries = entryList
 
@@ -31,10 +30,6 @@ class EntryAdapter : RecyclerView.Adapter<EntryAdapter.ViewHolder?> {
     inner class ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var entryTextView: TextView
-        var league: TextView? = null
-        var yearEstablished: TextView? = null
-        var currentUserId: TextView? = null
-
         init {
             entryTextView =
                 itemView.findViewById<View>(R.id.entryIdTextView) as TextView
@@ -105,8 +100,6 @@ class EntryAdapter : RecyclerView.Adapter<EntryAdapter.ViewHolder?> {
             holder.entryTextView.setText(allEntries!![position].title)
         }
         //holder.entryTextView.tag = allEntries!![position].get_id()
-        //holder.league.setText(allEntries.get(position).getLeague());
-//holder.yearEstablished.setText(String.valueOf(allEntries.get(position).getYearEstablished()));
     }
 
     override
