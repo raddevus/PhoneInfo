@@ -54,7 +54,7 @@ class PlaceholderFragment : Fragment() {
                 root = inflater.inflate(R.layout.fragment_main, container, false)
                 textView = root?.findViewById(R.id.section_label)
             }
-            1 -> {
+            4 -> {
                 root = inflater.inflate(R.layout.fragment_phone, container, false)
                 val b: Button = root?.findViewById(R.id.alertbutton) as Button
                 b.setOnClickListener {
@@ -80,14 +80,21 @@ class PlaceholderFragment : Fragment() {
 
                 EntryViewRecyclerView.adapter = entryAdapter;
             }
-            4->{
+            1->{
                 root = inflater.inflate(R.layout.fragment_phone, container, false)
                 val b: Button = root?.findViewById(R.id.alertbutton) as Button
-                b.setOnClickListener {
-                    Toast.makeText(it.getContext(),"alert", Toast.LENGTH_SHORT).show()
-                }
+                b.text = "Load Phone Details"
                 val EntryViewRecyclerView: RecyclerView =
                     root.findViewById(R.id.entryRecyclerView) as RecyclerView
+
+                b.setOnClickListener {
+                    //Toast.makeText(it.getContext(),"alert", Toast.LENGTH_SHORT).show()
+                    var entryList = ArrayList<Entry>()
+                    getPhoneDetails(entryList)
+                    var entryAdapter = EntryAdapter(entryList)
+                    EntryViewRecyclerView.adapter = entryAdapter;
+                }
+
                 val manager: RecyclerView.LayoutManager = LinearLayoutManager(root.getContext())
                 EntryViewRecyclerView.setLayoutManager(manager)
                 var entryList = ArrayList<Entry>()
@@ -113,41 +120,24 @@ class PlaceholderFragment : Fragment() {
 
     fun requestAllPermissions(){
         val permission = Manifest.permission.READ_PHONE_STATE
-        val permission2 = Manifest.permission.READ_SMS
         val grant = ContextCompat.checkSelfPermission(context!!, permission)
         if (grant != PackageManager.PERMISSION_GRANTED) {
-            val permission_list = arrayOfNulls<String>(2)
+            val permission_list = arrayOfNulls<String>(1)
             permission_list[0] = permission
-            permission_list[1] = permission2
-            ActivityCompat.requestPermissions(activity as Activity, permission_list, 2)
+            ActivityCompat.requestPermissions(activity as Activity, permission_list, 1)
         }
     }
 
     fun getPhoneDetails(allEntries : ArrayList<Entry>){
-
-
         val tMgr =
             context!!.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager as TelephonyManager?
         if (ActivityCompat.checkSelfPermission(
                 context!!,
-                Manifest.permission.READ_SMS
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                context!!,
-                Manifest.permission.READ_PHONE_NUMBERS
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                context!!,
                 Manifest.permission.READ_PHONE_STATE
             ) != PackageManager.PERMISSION_GRANTED
-        ) { // TODO: Consider calling
-//    ActivityCompat#requestPermissions
-// here to request the missing permissions, and then overriding
-            //allEntries.add( Entry("That isn't going to work."))
+        ) {
             requestAllPermissions();
             return;
-//   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                                          int[] grantResults)
-// to handle the case where the user grants the permission. See the documentation
-// for ActivityCompat#requestPermissions for more details.
         }
         allEntries.add( Entry(tMgr?.line1Number ?: "failed lineNumber"))
         allEntries.add(Entry("MMS User agent: ${tMgr?.mmsUserAgent ?: "failed user agent"}" ));
