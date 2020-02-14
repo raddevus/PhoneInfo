@@ -40,6 +40,9 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
 
     private lateinit var pageViewModel: PageViewModel
     var temperaturelabel: TextView? = null
+    var mSensorManager : SensorManager? = null
+    var mTemperature : Sensor? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pageViewModel = ViewModelProviders.of(this).get(PageViewModel::class.java).apply {
@@ -59,19 +62,17 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
 
         when (arguments?.getInt(ARG_SECTION_NUMBER)) {
             2 -> {
-                var mSensorManager : SensorManager
-                var mTemperature : Sensor? = null
+
                 root = inflater.inflate(R.layout.fragment_temperature, container, false)
                 temperaturelabel = root?.findViewById(R.id.temperatureTextView)
                 mSensorManager = context?.getSystemService(SENSOR_SERVICE) as SensorManager
                     //context, SENSOR_SERVICE) as SensorManager
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.ICE_CREAM_SANDWICH){
-                    mTemperature= mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE); // requires API level 14.
+                    mTemperature= mSensorManager?.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE); // requires API level 14.
                 }
                 if (mTemperature == null) {
                     temperaturelabel?.setText(NOT_SUPPORTED_MESSAGE);
                 }
-
             }
             3 -> {
                 root = inflater.inflate(R.layout.fragment_main, container, false)
@@ -246,11 +247,22 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+       // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onSensorChanged(p0: SensorEvent?) {
         var ambient_temperature = p0!!.values[0]
         temperaturelabel?.setText("Ambient Temperature: ${ambient_temperature}\n")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mSensorManager?.registerListener(this, mTemperature, SensorManager.SENSOR_DELAY_NORMAL);
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mSensorManager?.unregisterListener(this);
     }
 }
