@@ -3,7 +3,12 @@ package app.actionmobile.phoneinfo.ui.main
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Context.SENSOR_SERVICE
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.telephony.TelephonyManager
@@ -16,6 +21,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -30,10 +36,10 @@ import java.util.*
 /**
  * A placeholder fragment containing a simple view.
  */
-class PlaceholderFragment : Fragment() {
+class PlaceholderFragment : Fragment(), SensorEventListener {
 
     private lateinit var pageViewModel: PageViewModel
-
+    var temperaturelabel: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pageViewModel = ViewModelProviders.of(this).get(PageViewModel::class.java).apply {
@@ -46,11 +52,28 @@ class PlaceholderFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        var textView : TextView? = null
         var root : View? = null
-        var textView: TextView? = null
-        when (arguments?.getInt(ARG_SECTION_NUMBER)) {
 
-            2,3 -> {
+        var NOT_SUPPORTED_MESSAGE = "Sorry, sensor not available for this device."
+
+        when (arguments?.getInt(ARG_SECTION_NUMBER)) {
+            2 -> {
+                var mSensorManager : SensorManager
+                var mTemperature : Sensor? = null
+                root = inflater.inflate(R.layout.fragment_temperature, container, false)
+                temperaturelabel = root?.findViewById(R.id.temperatureTextView)
+                mSensorManager = context?.getSystemService(SENSOR_SERVICE) as SensorManager
+                    //context, SENSOR_SERVICE) as SensorManager
+                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.ICE_CREAM_SANDWICH){
+                    mTemperature= mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE); // requires API level 14.
+                }
+                if (mTemperature == null) {
+                    temperaturelabel?.setText(NOT_SUPPORTED_MESSAGE);
+                }
+
+            }
+            3 -> {
                 root = inflater.inflate(R.layout.fragment_main, container, false)
                 textView = root?.findViewById(R.id.section_label)
             }
@@ -220,5 +243,14 @@ class PlaceholderFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onSensorChanged(p0: SensorEvent?) {
+        var ambient_temperature = p0!!.values[0]
+        temperaturelabel?.setText("Ambient Temperature: ${ambient_temperature}\n")
     }
 }
