@@ -239,11 +239,16 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
                 allEntries.add(Entry("SIM State - CARD RESTRICTED"))
             }
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            allEntries.add(Entry("voicemail # : ${tMgr?.voiceMailNumber}"))
-            allEntries.add(Entry("SIM Serial #: ${tMgr?.simSerialNumber}"))
-            allEntries.add(Entry("IMEI: ${tMgr?.imei}"))
-            allEntries.add(Entry("MEID: ${tMgr?.meid}"))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+                allEntries.add(Entry("voicemail # : ${tMgr?.voiceMailNumber}"))
+                allEntries.add(Entry("SIM Serial #: ${tMgr?.simSerialNumber}"))
+                allEntries.add(Entry("IMEI: ${tMgr?.imei}"))
+                allEntries.add(Entry("MEID: ${tMgr?.meid}"))
+            }
+            catch(e : Exception){
+                Log.d("MainActivity", e.message);
+            }
         }
         allEntries.add(Entry("Network Operator Name: ${tMgr?.networkOperatorName}"))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
