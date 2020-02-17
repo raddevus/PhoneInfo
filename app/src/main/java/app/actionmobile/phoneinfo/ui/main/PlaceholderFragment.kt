@@ -99,7 +99,7 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
                 urlSpinner.adapter = spinnerAdapter;
                 spinnerAdapter.add(" - none - ")
                 spinnerAdapter.notifyDataSetChanged()
-                fillSpinnerWithValuesFromUserPrefs()
+                fillSpinnerWithValuesFromUserPrefs(spinnerAdapter)
             }
             5 -> {
 
@@ -154,8 +154,18 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
         return root
     }
 
-    fun fillSpinnerWithValuesFromUserPrefs(){
+    fun fillSpinnerWithValuesFromUserPrefs(spinnerAdapter : ArrayAdapter<String>){
+        var urlPrefs = context!!.getSharedPreferences("urls", MODE_PRIVATE);
+        var urls = urlPrefs.getString("urls", "");
 
+        var allUrls = urls?.split(",");
+        //var allUrls : Array<String> = arrayOf("raddev.us","google.com", "microsoft.com","codeproject.com", "newlibre.com")
+        if (allUrls != null) {
+            for (u in allUrls) {
+                spinnerAdapter.add(u);
+            }
+            spinnerAdapter.notifyDataSetChanged()
+        }
     }
 
     fun TestUrls(v : View){
