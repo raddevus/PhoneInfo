@@ -1,6 +1,7 @@
 package app.actionmobile.phoneinfo.ui.main
 
 import android.Manifest
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
@@ -176,7 +177,7 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
             ActivityCompat.requestPermissions(activity as Activity, permission_list, 1)
         }
     }
-
+    @TargetApi(26)
     fun getPhoneDetails(allEntries : ArrayList<Entry>){
         val tMgr =
             context!!.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager as TelephonyManager?
