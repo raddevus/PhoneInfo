@@ -89,9 +89,8 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
                 EntryViewRecyclerView.adapter = entryAdapter;
             }
             2 ->{
-                root = inflater.inflate(R.layout.fragment_phone, container, false)
-                val b: Button = root?.findViewById(R.id.alertbutton) as Button
-                b.text = "Test URLs"
+                root = inflater.inflate(R.layout.fragment_dns, container, false)
+                val b: Button = root?.findViewById(R.id.dnsButton) as Button
                 b.setOnClickListener {
                     TestUrls(root!!)
                 }
