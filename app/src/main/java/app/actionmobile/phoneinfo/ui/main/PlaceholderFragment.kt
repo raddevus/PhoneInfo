@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Context.SENSOR_SERVICE
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -20,9 +19,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -91,9 +88,18 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
             2 ->{
                 root = inflater.inflate(R.layout.fragment_dns, container, false)
                 val b: Button = root?.findViewById(R.id.dnsButton) as Button
+                val urlSpinner : Spinner = root?.findViewById(R.id.urlSpinner) as Spinner
                 b.setOnClickListener {
                     TestUrls(root!!)
                 }
+                val spinnerAdapter: ArrayAdapter<String> =
+                    ArrayAdapter<String>(context!!, android.R.layout.simple_list_item_1)
+                // Specify the layout to use when the list of choices appears
+                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                urlSpinner.adapter = spinnerAdapter;
+                spinnerAdapter.add(" - none - ")
+                spinnerAdapter.notifyDataSetChanged()
+                fillSpinnerWithValuesFromUserPrefs()
             }
             5 -> {
 
@@ -146,6 +152,10 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
 //            textView?.text = it
 //        })
         return root
+    }
+
+    fun fillSpinnerWithValuesFromUserPrefs(){
+
     }
 
     fun TestUrls(v : View){
