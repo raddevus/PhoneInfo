@@ -8,10 +8,10 @@ import app.actionmobile.phoneinfo.R
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_phone,
-    R.string.tab_temperature,
-    R.string.tab_text_1,
+    R.string.tab_dns,
+    R.string.test1,
     R.string.tab_text_2,
-    R.string.test1
+    R.string.tab_temperature
 
 )
 

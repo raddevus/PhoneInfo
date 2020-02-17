@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import android.telephony.TelephonyManager.*
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,12 +22,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import app.actionmobile.phoneinfo.DNSWorker
 import app.actionmobile.phoneinfo.Entry
 import app.actionmobile.phoneinfo.EntryAdapter
 import app.actionmobile.phoneinfo.R
@@ -61,7 +61,39 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
         var NOT_SUPPORTED_MESSAGE = "Sorry, sensor not available for this device."
 
         when (arguments?.getInt(ARG_SECTION_NUMBER)) {
-            2 -> {
+            1->{
+                root = inflater.inflate(R.layout.fragment_phone, container, false)
+                val b: Button = root?.findViewById(R.id.alertbutton) as Button
+                b.text = "Load Phone Details"
+                val EntryViewRecyclerView: RecyclerView =
+                    root.findViewById(R.id.entryRecyclerView) as RecyclerView
+
+                b.setOnClickListener {
+                    //Toast.makeText(it.getContext(),"alert", Toast.LENGTH_SHORT).show()
+                    var entryList = ArrayList<Entry>()
+                    getPhoneDetails(entryList)
+                    var entryAdapter = EntryAdapter(entryList)
+                    EntryViewRecyclerView.adapter = entryAdapter;
+                }
+
+                val manager: RecyclerView.LayoutManager = LinearLayoutManager(root.getContext())
+                EntryViewRecyclerView.setLayoutManager(manager)
+                var entryList = ArrayList<Entry>()
+
+                getPhoneDetails(entryList);
+
+                var entryAdapter = EntryAdapter(entryList)
+                EntryViewRecyclerView.adapter = entryAdapter;
+            }
+            2 ->{
+                root = inflater.inflate(R.layout.fragment_phone, container, false)
+                val b: Button = root?.findViewById(R.id.alertbutton) as Button
+                b.text = "Test URLs"
+                b.setOnClickListener {
+                    TestUrls(root!!)
+                }
+            }
+            5 -> {
 
                 root = inflater.inflate(R.layout.fragment_temperature, container, false)
                 temperaturelabel = root?.findViewById(R.id.temperatureTextView)
@@ -104,37 +136,28 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
 
                 EntryViewRecyclerView.adapter = entryAdapter;
             }
-            1->{
-                root = inflater.inflate(R.layout.fragment_phone, container, false)
-                val b: Button = root?.findViewById(R.id.alertbutton) as Button
-                b.text = "Load Phone Details"
-                val EntryViewRecyclerView: RecyclerView =
-                    root.findViewById(R.id.entryRecyclerView) as RecyclerView
 
-                b.setOnClickListener {
-                    //Toast.makeText(it.getContext(),"alert", Toast.LENGTH_SHORT).show()
-                    var entryList = ArrayList<Entry>()
-                    getPhoneDetails(entryList)
-                    var entryAdapter = EntryAdapter(entryList)
-                    EntryViewRecyclerView.adapter = entryAdapter;
-                }
-
-                val manager: RecyclerView.LayoutManager = LinearLayoutManager(root.getContext())
-                EntryViewRecyclerView.setLayoutManager(manager)
-                var entryList = ArrayList<Entry>()
-
-                getPhoneDetails(entryList);
-
-                var entryAdapter = EntryAdapter(entryList)
-                EntryViewRecyclerView.adapter = entryAdapter;
-            }
         }
 
 
-        pageViewModel.text.observe(this, Observer<String> {
-            textView?.text = it
-        })
+//        pageViewModel.text.observe(this, Observer<String> {
+//            textView?.text = it
+//        })
         return root
+    }
+
+    fun TestUrls(v : View){
+        val entryViewRecyclerView: RecyclerView =
+            v.findViewById(R.id.entryRecyclerView) as RecyclerView
+        val manager: RecyclerView.LayoutManager = LinearLayoutManager(v.getContext())
+        entryViewRecyclerView.setLayoutManager(manager)
+        var entryList = ArrayList<Entry>()
+        var allUrls : Array<String> = arrayOf("raddev.us","google.com",
+            "microsoft.com","codeproject.com", "newlibre.com")
+        for (u in allUrls) {
+            Log.d("MainActivity", u)
+            DNSWorker(entryList, entryViewRecyclerView).execute(u)
+        }
     }
 
     fun getAllEntries(EntryViewRecyclerView : RecyclerView){
