@@ -3,7 +3,9 @@ package app.actionmobile.phoneinfo.ui.main
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Context.SENSOR_SERVICE
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -152,17 +154,17 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
         val manager: RecyclerView.LayoutManager = LinearLayoutManager(v.getContext())
         entryViewRecyclerView.setLayoutManager(manager)
         var entryList = ArrayList<Entry>()
-        var allUrls : Array<String> = arrayOf("raddev.us","google.com",
-            "microsoft.com","codeproject.com", "newlibre.com")
-        for (u in allUrls) {
-            Log.d("MainActivity", u)
-            DNSWorker(entryList, entryViewRecyclerView).execute(u)
+        var urlPrefs = context!!.getSharedPreferences("urls", MODE_PRIVATE);
+        var urls = urlPrefs.getString("urls", "");
+
+        var allUrls = urls?.split(",");
+        //var allUrls : Array<String> = arrayOf("raddev.us","google.com", "microsoft.com","codeproject.com", "newlibre.com")
+        if (allUrls != null) {
+            for (u in allUrls) {
+                Log.d("MainActivity", u)
+                DNSWorker(entryList, entryViewRecyclerView).execute(u)
+            }
         }
-    }
-
-    fun getAllEntries(EntryViewRecyclerView : RecyclerView){
-        // clear it first so when one is added the list isn't doubled.
-
     }
 
     fun requestAllPermissions(){
