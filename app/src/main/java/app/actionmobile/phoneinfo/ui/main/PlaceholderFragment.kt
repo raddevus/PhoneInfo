@@ -179,6 +179,8 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
 
         var allUrls = urls?.split(",");
         //var allUrls : Array<String> = arrayOf("raddev.us","google.com", "microsoft.com","codeproject.com", "newlibre.com")
+        // ### Even if the urls is empty, when the split() returns you get one blank item
+        // ### in the list.  That's what the check for empty string below is for.
         if (allUrls != null && !allUrls[0].equals("")) {
             for (u in allUrls) {
                 Log.d("MainActivity", u)
