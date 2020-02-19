@@ -129,6 +129,7 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
             3 -> {
                 root = inflater.inflate(R.layout.fragment_text_receiver, container, false)
                 requestAllMessagePermissions()
+                mainRecycler = root?.findViewById(R.id.entryRecyclerView)
             }
             4 -> {
                 root = inflater.inflate(R.layout.fragment_phone, container, false)
@@ -337,6 +338,8 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
          */
         private const val ARG_SECTION_NUMBER = "section_number"
         public var spinnerAdapter: ArrayAdapter<String>? = null
+        public var mainRecycler : RecyclerView? = null
+        private var entryList = ArrayList<Entry>()
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -356,6 +359,19 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
                 spinnerAdapter?.add(url)
                 spinnerAdapter?.notifyDataSetChanged()
             }
+        }
+
+        fun handleTextMessageArrival(msg : String){
+            if (mainRecycler == null){return;}
+
+            val manager: RecyclerView.LayoutManager = LinearLayoutManager(mainRecycler?.context)
+            mainRecycler?.setLayoutManager(manager)
+
+            entryList.add(Entry(msg))
+            var entryAdapter = EntryAdapter(entryList)
+
+            mainRecycler?.adapter = entryAdapter;
+
         }
     }
 
