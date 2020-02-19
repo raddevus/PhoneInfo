@@ -52,10 +52,11 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 currentValue
                             }
+                            PlaceholderFragment.updateUrlSpinner(currentValue)
                         }
                         edit.putString("urls", outValues)
                         edit.commit()
-                        PlaceholderFragment.areUserPrefsChanged = true
+
                         Log.d("MainActivity", "final outValues : $outValues")
                     })
                 .setNegativeButton("CANCEL",

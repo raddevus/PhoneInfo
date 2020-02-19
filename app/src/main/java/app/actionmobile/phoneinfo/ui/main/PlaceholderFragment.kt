@@ -42,7 +42,7 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
     var temperaturelabel: TextView? = null
     var mSensorManager : SensorManager? = null
     var mTemperature : Sensor? = null
-    var spinnerAdapter: ArrayAdapter<String>? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,10 +90,22 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
                 root = inflater.inflate(R.layout.fragment_dns, container, false)
                 val b: Button = root?.findViewById(R.id.dnsButton) as Button
                 val urlSpinner : Spinner = root?.findViewById(R.id.urlSpinner) as Spinner
+                val deleteButton : ImageButton = root?.findViewById(R.id.deleteButton) as ImageButton
 
                 b.setOnClickListener {
                     TestUrls(root!!)
                 }
+
+                deleteButton.setOnClickListener{
+                    val item: String = urlSpinner.getSelectedItem() as String
+                    if (!item.equals("")) {
+                        spinnerAdapter!!.remove(item)
+                        spinnerAdapter!!.notifyDataSetChanged()
+                        deleteUrlFromPrefs()
+                    }
+                }
+
+
                 spinnerAdapter =
                     ArrayAdapter<String>(context!!, android.R.layout.simple_list_item_1)
                 // Specify the layout to use when the list of choices appears
@@ -152,6 +164,28 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
 //            textView?.text = it
 //        })
         return root
+    }
+
+    fun deleteUrlFromPrefs(){
+        val urls = context!!.getSharedPreferences(
+            "urls",
+            Context.MODE_PRIVATE
+        )
+        var outValues = ""
+        Log.d("MainActivity", urls.getString("urls", ""))
+        val edit = urls.edit()
+        for (idx in 0..spinnerAdapter!!.count -1) {
+            var currentValue = spinnerAdapter?.getItem(idx)
+            if (currentValue !== "") {
+                outValues += if (outValues !== "") {
+                    ",$currentValue"
+                } else {
+                    currentValue
+                }
+            }
+        }
+        edit.putString("urls", outValues)
+        edit.commit()
     }
 
     fun fillSpinnerWithValuesFromUserPrefs(spinnerAdapter : ArrayAdapter<String>){
@@ -290,6 +324,7 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
          * fragment.
          */
         private const val ARG_SECTION_NUMBER = "section_number"
+        public var spinnerAdapter: ArrayAdapter<String>? = null
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -303,7 +338,13 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
                 }
             }
         }
-        public var areUserPrefsChanged : Boolean = false
+
+        fun updateUrlSpinner(url : String){
+            if (spinnerAdapter != null) {
+                spinnerAdapter?.add(url)
+                spinnerAdapter?.notifyDataSetChanged()
+            }
+        }
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
@@ -318,13 +359,6 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
     override fun onResume() {
         super.onResume()
         mSensorManager?.registerListener(this, mTemperature, SensorManager.SENSOR_DELAY_NORMAL);
-        if (areUserPrefsChanged){
-            areUserPrefsChanged = false
-            if (spinnerAdapter != null) {
-                fillSpinnerWithValuesFromUserPrefs(spinnerAdapter.let{it}!!)
-            }
-
-        }
 
     }
 
