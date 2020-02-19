@@ -127,8 +127,8 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
                 }
             }
             3 -> {
-                root = inflater.inflate(R.layout.fragment_main, container, false)
-                textView = root?.findViewById(R.id.section_label)
+                root = inflater.inflate(R.layout.fragment_text_receiver, container, false)
+                requestAllMessagePermissions()
             }
             4 -> {
                 root = inflater.inflate(R.layout.fragment_phone, container, false)
@@ -235,6 +235,18 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
             ActivityCompat.requestPermissions(activity as Activity, permission_list, 1)
         }
     }
+
+    fun requestAllMessagePermissions(){
+        val permission = Manifest.permission.RECEIVE_SMS
+        val grant = ContextCompat.checkSelfPermission(context!!, permission)
+        if (grant != PackageManager.PERMISSION_GRANTED) {
+            val permission_list = arrayOfNulls<String>(2)
+            permission_list[0] = permission
+            permission_list[1] = Manifest.permission.RECEIVE_MMS
+            ActivityCompat.requestPermissions(activity as Activity, permission_list, 1)
+        }
+    }
+
     @TargetApi(26)
     fun getPhoneDetails(allEntries : ArrayList<Entry>){
         val tMgr =

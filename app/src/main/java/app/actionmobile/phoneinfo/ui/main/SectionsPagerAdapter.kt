@@ -9,7 +9,7 @@ import app.actionmobile.phoneinfo.R
 private val TAB_TITLES = arrayOf(
     R.string.tab_phone,
     R.string.tab_dns,
-    R.string.test1,
+    R.string.tab_text,
     R.string.tab_text_2,
     R.string.tab_temperature
 

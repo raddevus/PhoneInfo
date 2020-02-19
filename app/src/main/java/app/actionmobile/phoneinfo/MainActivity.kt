@@ -2,6 +2,8 @@ package app.actionmobile.phoneinfo
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +11,7 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import app.actionmobile.phoneinfo.ui.main.PlaceholderFragment
 import app.actionmobile.phoneinfo.ui.main.SectionsPagerAdapter
@@ -17,6 +20,9 @@ import com.google.android.material.tabs.TabLayout
 
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var lbm : LocalBroadcastManager
+    lateinit var textReceiver : TextReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,5 +71,11 @@ class MainActivity : AppCompatActivity() {
             alert.setView(v)
             alert.show()
         }
+
+//        lbm = LocalBroadcastManager.getInstance(this)
+//        textReceiver = TextReceiver()
+//        lbm.registerReceiver(textReceiver,IntentFilter())
+//        var intent = Intent()
+//        lbm.sendBroadcast(intent)
     }
 }
