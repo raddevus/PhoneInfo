@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
+import app.actionmobile.phoneinfo.ui.main.PlaceholderFragment
 import app.actionmobile.phoneinfo.ui.main.SectionsPagerAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         edit.putString("urls", outValues)
                         edit.commit()
+                        PlaceholderFragment.areUserPrefsChanged = true
                         Log.d("MainActivity", "final outValues : $outValues")
                     })
                 .setNegativeButton("CANCEL",

@@ -42,6 +42,7 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
     var temperaturelabel: TextView? = null
     var mSensorManager : SensorManager? = null
     var mTemperature : Sensor? = null
+    var spinnerAdapter: ArrayAdapter<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,17 +90,16 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
                 root = inflater.inflate(R.layout.fragment_dns, container, false)
                 val b: Button = root?.findViewById(R.id.dnsButton) as Button
                 val urlSpinner : Spinner = root?.findViewById(R.id.urlSpinner) as Spinner
+
                 b.setOnClickListener {
                     TestUrls(root!!)
                 }
-                val spinnerAdapter: ArrayAdapter<String> =
+                spinnerAdapter =
                     ArrayAdapter<String>(context!!, android.R.layout.simple_list_item_1)
                 // Specify the layout to use when the list of choices appears
-                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerAdapter?.let{it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)}
                 urlSpinner.adapter = spinnerAdapter;
-                spinnerAdapter.add(" - none - ")
-                spinnerAdapter.notifyDataSetChanged()
-                fillSpinnerWithValuesFromUserPrefs(spinnerAdapter)
+                fillSpinnerWithValuesFromUserPrefs(spinnerAdapter?.let{it}!!)
             }
             5 -> {
 
@@ -179,11 +179,14 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
 
         var allUrls = urls?.split(",");
         //var allUrls : Array<String> = arrayOf("raddev.us","google.com", "microsoft.com","codeproject.com", "newlibre.com")
-        if (allUrls != null) {
+        if (allUrls != null && !allUrls[0].equals("")) {
             for (u in allUrls) {
                 Log.d("MainActivity", u)
                 DNSWorker(entryList, entryViewRecyclerView).execute(u)
             }
+        }
+        else{
+            Toast.makeText(context,"There are no URLs in the list.",Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -298,6 +301,7 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
                 }
             }
         }
+        public var areUserPrefsChanged : Boolean = false
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
@@ -312,6 +316,13 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
     override fun onResume() {
         super.onResume()
         mSensorManager?.registerListener(this, mTemperature, SensorManager.SENSOR_DELAY_NORMAL);
+        if (areUserPrefsChanged){
+            areUserPrefsChanged = false
+            if (spinnerAdapter != null) {
+                fillSpinnerWithValuesFromUserPrefs(spinnerAdapter.let{it}!!)
+            }
+
+        }
 
     }
 
