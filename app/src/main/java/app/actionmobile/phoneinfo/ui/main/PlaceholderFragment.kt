@@ -26,10 +26,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import app.actionmobile.phoneinfo.DNSWorker
-import app.actionmobile.phoneinfo.Entry
-import app.actionmobile.phoneinfo.EntryAdapter
-import app.actionmobile.phoneinfo.R
+import app.actionmobile.phoneinfo.*
 import java.util.*
 
 
@@ -130,6 +127,9 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
                 root = inflater.inflate(R.layout.fragment_text_receiver, container, false)
                 requestAllMessagePermissions()
                 mainRecycler = root?.findViewById(R.id.entryRecyclerView)
+                //var m = MMSMonitor(activity!!,context!!)
+                //m.startMMSMonitoring()
+
             }
             4 -> {
                 root = inflater.inflate(R.layout.fragment_phone, container, false)
@@ -241,10 +241,11 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
         val permission = Manifest.permission.RECEIVE_SMS
         val grant = ContextCompat.checkSelfPermission(context!!, permission)
         if (grant != PackageManager.PERMISSION_GRANTED) {
-            val permission_list = arrayOfNulls<String>(3)
+            val permission_list = arrayOfNulls<String>(4)
             permission_list[0] = permission
             permission_list[1] = Manifest.permission.RECEIVE_MMS
             permission_list[2] = Manifest.permission.BROADCAST_WAP_PUSH
+            permission_list[3] = Manifest.permission.READ_SMS
             ActivityCompat.requestPermissions(activity as Activity, permission_list, 1)
         }
     }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var lbm : LocalBroadcastManager
     lateinit var textReceiver : TextReceiver
+    lateinit var m : MMSMonitor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +35,10 @@ class MainActivity : AppCompatActivity() {
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
         val fab: FloatingActionButton = findViewById(R.id.fab)
+
+        var provider = "com.android.providers.telephony.MmsProvider"
+        val uriMMSURI: Uri = Uri.parse("content://mms")
+        applicationContext.grantUriPermission(provider, uriMMSURI, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         fab.setOnClickListener { view ->
             val li = LayoutInflater.from(baseContext)

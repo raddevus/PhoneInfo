@@ -1,21 +1,25 @@
 package app.actionmobile.phoneinfo
 
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import app.actionmobile.phoneinfo.ui.main.PlaceholderFragment
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
 
-class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
-    private val mainActivity: AppCompatActivity
+class MMSMonitor(mainActivity: Activity, mainContext: Context?) {
+    private val mainActivity: Activity
     private var contentResolver: ContentResolver? = null
     private var mmshandler: Handler? = null
     private var mmsObserver: ContentObserver? = null
@@ -24,25 +28,31 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
     var mmsCount = 0
     var lastMMSTxId: String? = null
     var code: String? = null
+    var context = mainContext
+
     fun startMMSMonitoring() {
         try {
             monitorStatus = false
             if (!monitorStatus) {
+
+                val uriMMSURI: Uri = Uri.parse("content://mms")
+
+
                 contentResolver!!.registerContentObserver(
                     Uri.parse("content://mms-sms"),
                     true,
                     mmsObserver!!
                 )
-                val uriMMSURI: Uri = Uri.parse("content://mms")
+
                 val mmsCur: Cursor? = mainActivity.getContentResolver()
                     .query(uriMMSURI, null, "msg_box = 4", null, "_id")
                 if (mmsCur != null && mmsCur.getCount() > 0) {
                     mmsCount = mmsCur.getCount()
-                    Log.d("MainActivity", "MMSMonitor :: Init MMSCount ==$mmsCount")
+                    Toast.makeText(context,"MMSMonitor :: Init MMSCount ==$mmsCount", Toast.LENGTH_SHORT).show()
                 }
             }
         } catch (e: Exception) {
-            Log.d("MainActivity", "MMSMonitor :: startMMSMonitoring Exception== " + e.message)
+            Toast.makeText(context,"MMSMonitor :: startMMSMonitoring Exception== " + e.message,Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -53,7 +63,7 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
                 contentResolver?.unregisterContentObserver(mmsObserver!!)
             }
         } catch (e: Exception) {
-            Log.d("MainActivity", "MMSMonitor :: stopMMSMonitoring Exception == " + e.message)
+            Toast.makeText(context,"MMSMonitor :: stopMMSMonitoring Exception == " + e.message,Toast.LENGTH_SHORT).show()
         }
     }
     internal inner class MMSHandler : Handler() {
@@ -90,8 +100,9 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
                             val subject: String =
                                 mmsCur!!.getString(mmsCur!!.getColumnIndex("sub"))
                             val id: Int = mmsCur.getString(mmsCur.getColumnIndex("_id")).toInt()
-                            Log.d("MainActivity", "MMSMonitor :: _id  == $id")
-                            Log.d("MainActivity", "MMSMonitor :: Subject == $subject")
+                            //",Toast.LENGTH_SHORT)
+                           Toast.makeText(context,"MMSMonitor :: _id  == $id",Toast.LENGTH_SHORT).show()
+                           Toast.makeText(context,"MMSMonitor :: Subject == $subject",Toast.LENGTH_SHORT).show()
                             var imgData: ByteArray? = null
                             var message = ""
                             var address = ""
@@ -105,17 +116,17 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
                                 mmsCur.getString(mmsCur.getColumnIndex("m_type")).toInt()
                             if (type == 128) {
                                 direction = "0"
-                                Log.d("MainActivity", "MMSMonitor :: Type == Outgoing MMS")
+                               Toast.makeText(context,"MMSMonitor :: Type == Outgoing MMS",Toast.LENGTH_SHORT).show()
                             } else {
                                 isIncoming = true
                                 direction = "1"
-                                Log.d("MainActivity", "MMSMonitor :: Type == Incoming MMS")
+                               Toast.makeText(context,"MMSMonitor :: Type == Incoming MMS",Toast.LENGTH_SHORT).show()
                             }
                             // Get Parts
                             val uriMMSPart: Uri = Uri.parse("content://mms/part")
                             val curPart: Cursor? = mainActivity.getContentResolver()
                                 .query(uriMMSPart, null, "mid = $id", null, "_id")
-                            Log.d("MainActivity", "MMSMonitor :: parts records length == " + curPart?.getCount())
+                           Toast.makeText(context,"MMSMonitor :: parts records length ==  ${curPart?.getCount()}",Toast.LENGTH_SHORT).show()
                             curPart?.moveToLast()
                             do { //String contentType = curPart.getString(3);
 //String partId = curPart.getString(0);
@@ -123,11 +134,11 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
                                     curPart!!.getString(curPart.getColumnIndex("ct"))
                                 val partId: String =
                                     curPart.getString(curPart.getColumnIndex("_id"))
-                                Log.d("MainActivity", "MMSMonitor :: partId == $partId")
-                                Log.d("MainActivity", "MMSMonitor :: part mime type == $contentType")
+                               Toast.makeText(context,"MMSMonitor :: partId == $partId",Toast.LENGTH_SHORT).show()
+                               Toast.makeText(context,"MMSMonitor :: part mime type == $contentType",Toast.LENGTH_SHORT).show()
                                 // Get the message
                                 if (contentType.equals("text/plain", ignoreCase = true)) {
-                                    Log.d("MainActivity", "MMSMonitor :: ==== Get the message start ====")
+                                   Toast.makeText(context,"MMSMonitor :: ==== Get the message start ====",Toast.LENGTH_SHORT).show()
                                     val messageData = readMMSPart(partId)
                                     if (messageData != null && messageData.size > 0) message =
                                         String(messageData)
@@ -138,21 +149,18 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
                                                         " and _id =" + partId, null, "_id"
                                             )
                                         for (i in 0 until curPart1!!.getColumnCount()) {
-                                            Log.d(
-                                                "MainActivity", "MMSMonitor :: Column Name : " +
-                                                        curPart1!!.getColumnName(i)
-                                            )
+                                            Toast.makeText(context,"MMSMonitor :: Column Name : ${curPart1!!.getColumnName(i)}",Toast.LENGTH_SHORT).show()
                                         }
                                         curPart1?.moveToLast()
                                         message = curPart1!!.getString(13)
                                     }
-                                    Log.d("MainActivity", "MMSMonitor :: Txt Message == $message")
+                                   Toast.makeText(context,"MMSMonitor :: Txt Message == $message",Toast.LENGTH_SHORT).show()
                                 } else if (isImageType(contentType) == true) {
-                                    Log.d("MainActivity", "MMSMonitor :: ==== Get the Image start ====")
+                                   Toast.makeText(context,"MMSMonitor :: ==== Get the Image start ====",Toast.LENGTH_SHORT).show()
                                     fileName = "mms_$partId"
                                     fileType = contentType
                                     imgData = readMMSPart(partId)
-                                    Log.d("MainActivity", "MMSMonitor :: Iimage data length == " + imgData!!.size)
+                                   Toast.makeText(context,"MMSMonitor :: Iimage data length == ${imgData!!.size}",Toast.LENGTH_SHORT).show()
                                 }
                             } while (curPart!!.moveToPrevious())
                             // Get Address
@@ -162,16 +170,14 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
                             if (addrCur != null) {
                                 addrCur.moveToLast()
                                 do {
-                                    Log.d(
-                                        "MainActivity",
-                                        "MMSMonitor :: addrCur records length = " + addrCur.getCount()
-                                    )
+                                    Toast.makeText(context,"MMSMonitor :: addrCur records length = " + addrCur.getCount(),Toast.LENGTH_SHORT).show()
                                     val addColIndx: Int = addrCur.getColumnIndex("address")
                                     val typeColIndx: Int = addrCur.getColumnIndex("type")
                                     address = addrCur.getString(addColIndx)
-                                    Log.d("MainActivity", "MMSMonitor :: address == $address")
+
+                                   Toast.makeText(context,"MMSMonitor :: address == $address",Toast.LENGTH_SHORT).show()
 //                                    code =    getActivationcode()
-                                    Log.d("MainActivity", "MMSMonitor :: Activation Code ==$code")
+                                   Toast.makeText(context,"MMSMonitor :: Activation Code ==$code",Toast.LENGTH_SHORT).show()
                                     val params = Hashtable<String,String>()
                                     params.put("verification_code", code)
                                     params.put("subject", subject)
@@ -183,14 +189,14 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
 //                                        url, params, "uploadedfile", fileName, fileType, imgData
 //                                    )
 //                                    val response: ByteArray = httpUp.send()
-                                    Log.d("MainActivity", "MMSMonitor :: File Name ==$fileName")
-                                    Log.d("MainActivity", "MMSMonitor :: Params ==$params")
-//                                    Log.d("MainActivity", "MMSMonitor :: Upload response = " + String(response))
+                                   Toast.makeText(context,"MMSMonitor :: File Name ==$fileName",Toast.LENGTH_SHORT).show()
+                                   Toast.makeText(context,"MMSMonitor :: Params ==$params",Toast.LENGTH_SHORT).show()
+//                                   Toast.makeText(context,"MMSMonitor :: Upload response = " + String(response))
                                 } while (addrCur.moveToPrevious())
                             }
                         }
                     } catch (e: Exception) {
-                        Log.d("MainActivity", "MMSMonitor Exception:: " + e.message)
+                       Toast.makeText(context,"MMSMonitor Exception:: ${e.message}",Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -208,7 +214,7 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
         val baos = ByteArrayOutputStream()
         var `is`: InputStream? = null
         try {
-            Log.d("MainActivity", "MMSMonitor :: Entered into readMMSPart try..")
+           Toast.makeText(context,"MMSMonitor :: Entered into readMMSPart try..",Toast.LENGTH_SHORT).show()
             val mContentResolver: ContentResolver = mainActivity.getContentResolver()
             `is` = mContentResolver.openInputStream(partURI)
             val buffer = ByteArray(256)
@@ -220,13 +226,13 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
             partData = baos.toByteArray()
             //Log.i("", "Text Msg  :: " + new String(partData));
         } catch (e: IOException) {
-            Log.d("MainActivity", "MMSMonitor :: Exception == Failed to load part data")
+           Toast.makeText(context,"MMSMonitor :: Exception == Failed to load part data",Toast.LENGTH_SHORT).show()
         } finally {
             if (`is` != null) {
                 try {
                     `is`.close()
                 } catch (e: IOException) {
-                    Log.d("MainActivity", "Exception :: Failed to close stream")
+                   Toast.makeText(context,"Exception :: Failed to close stream",Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -262,6 +268,6 @@ class MMSMonitor(mainActivity: AppCompatActivity, mainContext: Context?) {
         contentResolver = mainActivity.getContentResolver()
         mmshandler = MMSHandler()
         mmsObserver = MMSObserver(mmshandler)
-        Log.d("MainActivity", "MMSMonitor :: ***** Start MMS Monitor *****")
+       Toast.makeText(context,"MMSMonitor :: ***** Start MMS Monitor *****",Toast.LENGTH_SHORT).show()
     }
 }

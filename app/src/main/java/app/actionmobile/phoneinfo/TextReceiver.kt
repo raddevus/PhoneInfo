@@ -12,7 +12,7 @@ import app.actionmobile.phoneinfo.ui.main.PlaceholderFragment
 class TextReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Toast.makeText(context!!,"Got a text", Toast.LENGTH_LONG).show()
+        //Toast.makeText(context!!,"Got a text", Toast.LENGTH_LONG).show()
         Log.d("MainActivity", "got a text")
         try {
             var allMessages: Array<SmsMessage> = getMessagesFromIntent(intent)
