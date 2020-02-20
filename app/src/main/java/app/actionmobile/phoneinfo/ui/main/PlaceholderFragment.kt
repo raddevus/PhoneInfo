@@ -241,9 +241,10 @@ class PlaceholderFragment : Fragment(), SensorEventListener {
         val permission = Manifest.permission.RECEIVE_SMS
         val grant = ContextCompat.checkSelfPermission(context!!, permission)
         if (grant != PackageManager.PERMISSION_GRANTED) {
-            val permission_list = arrayOfNulls<String>(2)
+            val permission_list = arrayOfNulls<String>(3)
             permission_list[0] = permission
             permission_list[1] = Manifest.permission.RECEIVE_MMS
+            permission_list[2] = Manifest.permission.BROADCAST_WAP_PUSH
             ActivityCompat.requestPermissions(activity as Activity, permission_list, 1)
         }
     }
