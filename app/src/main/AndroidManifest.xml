@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
     <uses-permission android:name="android.permission.RECEIVE_MMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_WAP_PUSH"/>
 
     <uses-permission android:name="android.permission.INTERNET" />
     <application
@@ -25,15 +26,19 @@
         </activity>
         <receiver android:name=".TextReceiver">
             <intent-filter>
+                <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />
+                <data android:mimeType="application/vnd.wap.mms-message" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".MmsReceiver" android:permission="android.permission.BROADCAST_WAP_PUSH">
+        <!-- <receiver android:name=".MmsReceiver" android:permission="android.permission.android.permission.RECEIVE_WAP_PUSH">
             <intent-filter>
-                <action android:name="android.provider.Telephony.WAP_PUSH_DELIVER" />
+                <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />
                 <data android:mimeType="application/vnd.wap.mms-message" />
             </intent-filter>
-        </receiver>
+        </receiver> -->
     </application>
 
 </manifest>
