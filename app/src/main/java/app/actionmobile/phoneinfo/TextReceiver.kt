@@ -35,7 +35,7 @@ class TextReceiver : BroadcastReceiver() {
             val mmsBundle = intent!!.extras
             var mmsData  = mmsBundle!!.getByteArray("data")
             Log.d("MainActivity","${mmsData}")
-            PlaceholderFragment.handleTextMessageArrival("mmsData : ${mmsData.toString()}")
+            PlaceholderFragment.handleTextMessageArrival("mmsData : ${mmsData!!.toString(Charsets.UTF_8)}")
 
 
 
